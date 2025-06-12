@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HIKARI OS</title>
+    <link rel="stylesheet" href="main.css">
+    <!-- Add Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <!-- Welcome Message -->
+    <div id="welcome-message"></div>
+
+    <!-- Hidden App Templates -->
+    <div id="app-templates" style="display: none;"></div>
+
+    <!-- App Grid -->
+    <div id="app-grid" style="max-width: 100%; height: calc(100vh - var(--taskbar-height) - 3rem); padding: 1rem; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 1rem;">
+        
+        <!-- Quadrants -->
+        <div class="quadrant-container">
+            <div id="quadrant-0" class="quadrant top-left"></div>
+        </div>
+        <div class="quadrant-container">
+            <div id="quadrant-1" class="quadrant top-right"></div>
+        </div>
+        <div class="quadrant-container">
+            <div id="quadrant-2" class="quadrant bottom-left"></div>
+        </div>
+        <div class="quadrant-container">
+            <div id="quadrant-3" class="quadrant bottom-right"></div>
+        </div>
+    </div>
+
+    <!-- Status Bar and Taskbar Container -->
+    <div class="bottom-container">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="connection-status pointer-enabled">
+                <span class="status-dot"></span>
+                <span class="status-text">No robots configured</span>
+            </div>
+        </div>
+
+        <!-- Connection Dropdown -->
+        <div class="connection-dropdown">
+            <div class="robot-list">
+                <!-- Robot connections will be populated here -->
+            </div>
+        </div>
+
+        <!-- Version Text -->
+        <div class="version-text" style="text-align: right;"><span class="clock"></span><br>HIKARI OS 1.0</div>
+
+        <!-- Taskbar -->
+        <div class="taskbar"></div>
+    </div>
+
+    <!-- Include IPC setup first -->
+    <script> window.ipcRenderer = require('electron').ipcRenderer; </script>
+    <!-- Then include other scripts -->
+    <script src="./registry.js"></script>
+    <script src="./initialize.js"></script>
+    <script src="./ssh.js"></script>
+    <script src="./clock.js"></script>
+    <script>
+        // Initialize robot connections
+        window.robotConnections = {
+            profiles: {},
+            connected: new Set(),
+            websockets: {}
+        };
+    </script>
+    <script src="./robot-manager.js"></script>
+    <script>
+        appRegistry.init();
+    </script>
+</body>
+</html>

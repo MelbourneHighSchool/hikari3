@@ -1,0 +1,867 @@
+/* Import Inter font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Root variables for theming */
+:root {
+    /* Base colors in RGB format */
+    /* It'll be loaded by the theme later from app_data.json */
+    --accent-rgb: 0, 0, 0;        /* #8d6fed */
+    --background-rgb: 0, 0, 0;       /* #13111a */
+    --foreground-rgb: 0, 0, 0;    /* #f4eeff */
+    --card-bg-rgb: 0, 0, 0;          /* #1a1826 */
+    --border-rgb: 0, 0, 0;        /* #ccb8d9 */
+    
+    /* Main theme colors using RGB values */
+    --background: #13111a;
+    --foreground: #f4eeff;
+    --accent: rgb(var(--accent-rgb));
+    
+    /* Components using rgba */
+    --card-opacity: 0.25;
+    --card-background: rgba(var(--card-bg-rgb), var(--card-opacity));
+    --card-bg: var(--card-background);  
+    
+    /* Other variables */
+    --taskbar-height: 45px;
+    --background-image: none;
+    --background-tint: none;
+    --card-blur: 16px;
+}
+
+/* Global default - disable pointer events and text selection (move to top) */
+* {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    /* pointer-events: none; */
+}
+
+/* Enable pointer events and text selection for specific elements */
+input, 
+select, 
+textarea, 
+button,
+.pointer-enabled {
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    pointer-events: auto;
+    cursor: auto;
+}
+
+/* Special case for buttons and clickable elements */
+button,
+.taskbar-icon,
+.pointer-enabled.no-select {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    cursor: pointer;
+    pointer-events: auto;  /* Make sure pointer events are enabled */
+}
+
+/* Re-enable pointer events for key UI containers */
+.taskbar,
+.quadrant,
+.quadrant-card,
+.card-content,
+.app-content,
+.subcard,
+.taskbar-icon,
+.quadrant.selectable {
+    pointer-events: auto !important;  /* Force enable pointer events for these containers */
+}
+
+/* Main background styling */
+html, body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--foreground);
+    height: 100vh;
+    margin: 0;
+    overflow: hidden; /* Disable scrolling */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+
+body {
+    position: relative;
+    background-color: var(--background);
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: var(--background-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 1;
+    z-index: -2;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--background-tint);
+    z-index: -1;
+}
+
+/* Taskbar styling */
+.taskbar {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    bottom: 0;
+    height: var(--taskbar-height);
+    background: transparent;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-sizing: border-box;
+    /* border: 2px solid rgba(var(--border-rgb), 0.1); */
+    border: 2px solid rgba(var(--accent-rgb), 0.4);
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 1rem;
+    min-width: min-content;
+    z-index: 1000;
+}
+
+.taskbar-icon {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    border-radius: 0.75rem;
+    background: rgba(var(--accent-rgb), 0.1);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: visible;
+}
+
+/* Tooltip styling */
+.taskbar-icon[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-6px);
+    background: rgba(0, 0, 0, 0.5);  /* Changed opacity to 0.5 */
+    color: #ffffff;
+    padding: 0.375rem 0.625rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.taskbar-icon[data-tooltip]:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(-3px);
+}
+
+.taskbar-icon:hover {
+    background: rgba(var(--accent-rgb), 0.15);
+    transform: translateY(-2px);
+}
+
+.taskbar-icon.active {
+    background: rgba(var(--accent-rgb), 0.2);
+}
+
+/* Media query for larger screens */
+@media (min-width: 768px) {
+    .card {
+        padding: 0;  /* Override with no padding */
+    }
+}
+
+.card.multitask-card .app-content {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: stretch;
+    justify-content: center;
+    height: 100%;
+    color: var(--foreground);
+}
+
+.card.multitask-card .app-content span.material-icons {
+    color: var(--accent);
+    opacity: 0.8;
+}
+
+.card.multitask-card .app-content h3 {
+    margin: 0;
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+.card.multitask-card.empty {
+    background-color: rgba(var(--card-bg-rgb), 0.1);
+    border-color: rgba(var(--accent-rgb), 0.1);
+}
+
+/* Update quadrant container styling */
+.quadrant-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: scroll;
+    gap: 1rem;
+    z-index: 11;  /* Ensure it's above app-grid */
+}
+
+.quadrant-container::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.subcard::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.subcard {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Move selectable styles to quadrant class */
+.quadrant {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    z-index: 12;  /* Ensure it's above container */
+}
+
+.quadrant.selectable {
+    cursor: pointer;
+}
+
+.quadrant.selectable::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 0.75rem;
+    border: 2px dashed rgba(var(--border-rgb), 0.1);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 1;
+}
+
+.quadrant.selectable:hover::before {
+    opacity: 1;
+}
+
+.taskbar-icon.dragging {
+    transform: scale(1.1);
+    background: rgba(var(--accent-rgb), 0.2);
+    border-color: rgba(var(--border-rgb), 0.5);
+}
+
+#welcome-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: rgba(var(--foreground-rgb), 0.3);
+    text-align: center;
+    z-index: -1;
+    opacity: 1;
+    transition: opacity 0.3s ease-out;
+    pointer-events: none;  /* Add this to prevent blocking clicks */
+    white-space: pre;
+}
+
+#welcome-message.fade-out {
+    opacity: 0;
+}
+
+.typing-animation {
+    display: inline-block;
+    opacity: 0;
+    animation: fadeIn 0.1s forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Form inputs should allow text selection */
+input[type="text"],
+input[type="color"],
+select,
+textarea {
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+}
+
+/* Make sure the form elements are clickable */
+/* .theme-editor input,
+.theme-editor select,
+.theme-editor button {
+    pointer-events: auto;
+} */
+
+/* Quadrant card styling */
+.quadrant-card {
+    border-radius: 0.75rem;
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    height: 100%;
+    min-height: 0;
+    transform: translateZ(0);
+    will-change: transform;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;  /* Lower z-index */
+}
+
+
+.quadrant-card .card-content {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    z-index: 13;
+    pointer-events: all;
+}
+
+.quadrant-card .app-content {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: stretch;
+    justify-content: center;
+    min-height: 0;
+    color: var(--foreground);
+    position: relative;
+    z-index: 14;
+}
+
+.quadrant-card .app-content span.material-icons {
+    color: var(--accent);
+    opacity: 0.8;
+    font-size: 20px !important;
+}
+
+.quadrant-card .app-content h3 {
+    margin: 0;
+    font-size: 0.875rem;
+    opacity: 0.8;
+}
+
+/* Style for subcards within quadrant-card */
+.quadrant-card .subcard {
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+    transition: all 0.3s ease;
+    flex: 1;
+    backdrop-filter: blur(var(--card-blur));
+    -webkit-backdrop-filter: blur(var(--card-blur));
+    background: rgba(var(--card-bg-rgb), var(--card-opacity));
+    box-sizing: border-box;
+    border: 2px solid rgba(var(--accent-rgb), 0.4);
+    position: relative;
+    z-index: 15; /* Lower z-index */
+
+    overflow: scroll;
+}
+
+/* Add or update paragraph styling in subcards */
+.quadrant-card .subcard p {
+    font-size: 0.75rem;  /* Smaller text size */
+    /*margin: 0.5rem 0 0 0; */ /* Add some space after the title */ 
+    opacity: 0.8;  /* Slightly dimmed like other text */
+    line-height: 1.4;  /* Adjust line height for readability */
+}
+
+/* Input row styling */
+.input-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.input-row label {
+    font-size: 0.75rem;
+    font-weight: 500;  /* Make labels bold */
+    opacity: 0.8;
+    white-space: nowrap;
+}
+
+/* Subtle input styling */
+input {
+    background: rgba(var(--card-bg-rgb), 0.2);
+    border: none;
+    outline: none;
+    color: var(--foreground);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.75rem;  /* Make text smaller to match */
+    transition: all 0.2s ease;
+    position: relative;
+    z-index: 16;
+    flex: 1;
+}
+
+/* Remove number input arrows */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+input[type="text"] 
+input[type="number"] {
+    cursor: text;
+}
+
+/* Color input specific styling */
+input[type="color"] {
+    width: 2rem;
+    height: 1.2rem;
+    min-height: 1.2rem;  /* Ensure minimum height */
+    margin-top: 0.15rem; /* top margin + bottom margin + height should add up to 1.5rem */
+    margin-bottom: 0.15rem; /* bottom margin + height should add up to 1.5rem */
+    padding: 0;
+    cursor: pointer;
+    flex: 0 0 2rem;  /* Don't grow, don't shrink, stay 2rem wide */
+    background: none;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 0.25rem;
+}
+
+/* Placeholder styling */
+input::placeholder {
+    color: var(--foreground);
+    opacity: 0.3;  /* More subtle placeholder */
+}
+
+/* Update app-grid to ensure it's above welcome message */
+#app-grid {
+    max-width: 100%;
+    height: calc(100vh - var(--taskbar-height) - 3rem);
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 1rem;
+    position: relative;
+    z-index: 10;
+}
+
+/* Make sure inputs in subcards are interactive */
+.quadrant-card .subcard input {
+    pointer-events: all !important;
+    /* cursor: text; */
+}
+
+/* Add this new class for app headers */
+.app-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+
+p {
+    margin-top: 1rem;
+}
+
+/* Theme list styling */
+.theme-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.theme-item {
+    background: rgba(var(--card-bg-rgb), 0.2);
+    outline: none;
+    color: var(--foreground);
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.25rem;
+    border: none;
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.75rem;
+    transition: all 0.2s ease;
+    text-align: left;
+    opacity: 0.8;
+    border: 1px solid rgba(0, 0, 0, 0);
+}
+
+.theme-item:hover {
+    background: rgba(var(--card-bg-rgb), 0.3);
+    opacity: 1;
+}
+
+.theme-item.new-theme {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.5;
+}
+
+.theme-item.new-theme:hover {
+    opacity: 0.8;
+}
+
+.theme-item.new-theme .material-icons {
+    font-size: 1.25rem;
+}
+
+.theme-item.selected-theme {
+    background: rgba(var(--accent-rgb), 0.15);  /* Using var(--accent) color */
+    border: 1px solid rgba(var(--accent-rgb), 0.3);
+}
+
+.theme-item.selected-theme:hover {
+    background: rgba(var(--accent-rgb), 0.2);
+}
+
+/* Profile list styling (for both SSH and Vision) */
+.profile-list,
+.vision-profile-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+/* Profile items (both SSH and Vision) */
+.profile-item,
+.vision-profile-item {
+    background: rgba(var(--card-bg-rgb), 0.2);
+    outline: none;
+    color: var(--foreground);
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.25rem;
+    border: none;
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.75rem;
+    transition: all 0.2s ease;
+    text-align: left;
+    opacity: 0.8;
+    border: 1px solid rgba(0, 0, 0, 0);
+}
+
+.profile-item:hover,
+.vision-profile-item:hover {
+    background: rgba(var(--card-bg-rgb), 0.3);
+    opacity: 1;
+}
+
+.profile-item.new-profile,
+.vision-profile-item.new-profile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.5;
+}
+
+.profile-item.new-profile:hover,
+.vision-profile-item.new-profile:hover {
+    opacity: 0.8;
+}
+
+.profile-item.new-profile .material-icons,
+.vision-profile-item.new-profile .material-icons {
+    font-size: 1.25rem;
+}
+
+.profile-item.selected-profile,
+.vision-profile-item.vision-selected-profile {
+    background: rgba(var(--accent-rgb), 0.15);
+    border: 1px solid rgba(var(--accent-rgb), 0.3);
+}
+
+.profile-item.selected-profile:hover,
+.vision-profile-item.vision-selected-profile:hover {
+    background: rgba(var(--accent-rgb), 0.2);
+}
+
+/* Delete button styling (both SSH and Vision) */
+.delete-container,
+.vision-delete-container {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.delete-profile,
+.vision-delete-profile {
+    position: absolute;
+    font-size: 1rem !important;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    cursor: pointer;
+    color: var(--foreground);
+    visibility: hidden;
+}
+
+.delete-container:hover .delete-profile,
+.vision-delete-container:hover .vision-delete-profile {
+    opacity: 0.5;
+    visibility: visible;
+}
+
+.delete-profile:hover,
+.vision-delete-profile:hover {
+    opacity: 1 !important;
+}
+
+/* Drag and drop styling (both SSH and Vision) */
+.profile-item.dragging,
+.vision-profile-item.dragging {
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.profile-item.drag-over,
+.vision-profile-item.drag-over {
+    border-top: 2px solid var(--accent);
+}
+
+.bottom-container {
+    position: fixed;
+    bottom: 1rem;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    padding: 0 1rem;
+    pointer-events: none;
+    z-index: 2000;
+}
+
+.bottom-container > * {
+    pointer-events: auto; /* Re-enable clicks for children */
+}
+
+.status-bar {
+    position: relative;
+    height: 28px; /* Reduced from 32px to 28px */
+    background: transparent;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 2px solid rgba(var(--border-rgb), 0.1);
+    border-radius: 0.5rem;
+    padding: 0 0.75rem;
+    display: flex;
+    align-items: center;
+}
+
+.connection-status {
+    position: relative; /* For dropdown positioning */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--foreground);
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.connection-dropdown {
+    position: absolute;
+    bottom: calc(100% + 0.5rem);
+    left: 1rem;
+    background: transparent;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 2px solid rgba(var(--border-rgb), 0.1);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    min-width: 150px;
+    z-index: 2001;
+    max-height: 200px;
+    overflow-y: auto;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition: opacity 0.2s ease-in, transform 0.2s ease-out, visibility 0.2s;
+}
+
+.connection-dropdown.show {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.robot-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.connection-option {
+    padding: 0.375rem 0.5rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
+    font-size: 0.75rem;
+    background-color: rgba(var(--card-bg-rgb), 0.1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;  /* For containing the ripple */
+}
+
+/* Ripple effect */
+.connection-option::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(var(--accent-rgb), 0.3);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%, -50%);
+    transform-origin: 50% 50%;
+}
+
+.connection-option.rippling::after {
+    animation: ripple 0.8s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    30% {
+        transform: scale(25, 25);
+        opacity: 0.4;
+    }
+    70% {
+        transform: scale(35, 35);
+        opacity: 0.2;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(45, 45);
+    }
+}
+
+.connection-option:hover {
+    background: rgba(var(--card-bg-rgb), 0.2);
+    /* border: 1px solid rgba(var(--border-rgb), 0.2); */
+}
+
+.status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+    background-color: #ff4444; /* Red for no connections */
+}
+
+.status-dot.partial {
+    background-color: #ffdd44; /* Yellow for partial connections */
+}
+
+.status-dot.connected {
+    background-color: #44ff44; /* Green for all connected */
+}
+
+.dropdown-footer {
+    padding: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+#refresh-connections {
+    padding: 4px 12px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: inherit;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#refresh-connections:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Version text styling */
+.version-text {
+    position: absolute;
+    right: 1rem;
+    bottom: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--foreground);
+    opacity: 0.5;
+    pointer-events: none;
+}

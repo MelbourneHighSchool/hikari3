@@ -1,0 +1,17 @@
+{
+    "name": "hikari3",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "electron ."
+    },
+    "author": "Starr Yang",
+    "license": "UNLICENSED",
+    "devDependencies": {
+        "electron": "^28.1.0"
+    },
+    "dependencies": {
+        "ssh2": "^1.16.0"
+    }
+}
