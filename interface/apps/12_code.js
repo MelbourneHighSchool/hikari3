@@ -619,6 +619,7 @@ appRegistry.register('code', {
 
         // Load Ace editor dynamically
         await import('../ace.js');
+        await import ('../ext-language_tools.js');
         await import('../mode-python.js');
         await import('../theme-one_dark.js');
         
@@ -626,6 +627,7 @@ appRegistry.register('code', {
         ace.config.set('basePath', '../');
         
         // Initialize Ace editor
+        ace.require("ace/ext/language_tools");
         const editor = ace.edit("editor");
         editor.setTheme("ace/theme/one_dark");
         editor.session.setMode("ace/mode/python");
@@ -635,6 +637,12 @@ appRegistry.register('code', {
         editor.setHighlightActiveLine(true);
         editor.session.setUseWrapMode(true);
         editor.session.setWrapLimitRange(null, null);
+
+        // Autocomplete
+        editor.setOptions({
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true,
+        });
         
         // Set initial state to read-only with placeholder
         editor.setReadOnly(true);
