@@ -1,0 +1,30 @@
+{
+  "themeSettings": {
+    "currentlySelected": "Default",
+    "themes": [
+      {
+        "name": "Default",
+        "accent_color": "#85b4ff",
+        "card_foreground_color": "#ffffff",
+        "card_background_color": "#1c3c54",
+        "border_color": "#8699a7",
+        "card_opacity": 0.25,
+        "card_blur": 16,
+        "background_type": "solid",
+        "background_image_url": "backgrounds/cliff.png",
+        "background_image_tint_color": "#13111a",
+        "background_solid_color": "#22272a",
+        "background_glow_color": "#9d4edd",
+        "background_image": "none"
+      }
+    ]
+  },
+  "visionProfiles": {
+    "currentlySelected": "",
+    "profiles": []
+  },
+  "sshProfiles": {
+    "currentlySelected": "",
+    "profiles": []
+  }
+}
