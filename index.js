@@ -482,12 +482,16 @@ app.whenReady().then(() => {
         appData.sshProfiles.profiles.forEach(profile => {
           console.log('Processing profile:', profile.name);
           const keyPath = path.join(__dirname, 'interface', profile.identityFile);
-          console.log('Reading private key from:', keyPath);
+          if (!profile.identityFile) {
+            console.log('Missing private key, skipping read');
+          } else {
+            console.log('Reading private key from:', keyPath);
+          }
           
           profiles[profile.name] = {
             hostname: profile.hostname,
             username: profile.username,
-            privateKey: fs.readFileSync(keyPath, 'utf8'),
+            privateKey: profile.identityFile ? fs.readFileSync(keyPath, 'utf8') : "",
             identityFile: profile.identityFile
           };
         });
