@@ -1,4 +1,4 @@
-const { app, BrowserWindow, nativeImage, ipcMain } = require('electron')
+const { app, BrowserWindow, nativeImage, ipcMain, globalShortcut } = require('electron')
 const path = require('path')
 const fs = require('fs')
 const ssh2 = require('ssh2')
@@ -377,6 +377,13 @@ process.on('SIGINT', () => {
 
 //
 app.whenReady().then(() => {
+  // Register the Ctrl+L shortcut
+  globalShortcut.register('CommandOrControl+L', () => {
+    if (mainWindow) {
+      mainWindow.webContents.send('set-quad-layout');
+    }
+  });
+
   // Set up ALL IPC handlers first
   ipcMain.handle('get-app-data', () => {
     return loadAppData()
@@ -1151,3 +1158,34 @@ app.on('ready', () => {
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
+
+app.on('will-quit', () => {
+  // Unregister the shortcut when the app is about to quit
+  globalShortcut.unregisterAll()
+})
+
+function testSSHConnection(profile) {
+  return new Promise((resolve, reject) => {
+    console.log(`Testing SSH connection to ${profile.hostname} as ${profile.username}`);
+    const client = new ssh2.Client();
+    
+    client.on('ready', () => {
+      console.log(`Successfully connected to ${profile.hostname}`);
+      client.end
+      resolve(true);
+    });
+
+    client.on('error', (err) => {
+      console.log(`Failed to connect to ${profile.hostname}:`, err.message);
+      client.end();
+      resolve(false);
+    });
+
+    client.connect({
+      host: profile.hostname,
+      port: 22,
+      username: profile.username,
+      privateKey: profile.privateKey
+    });
+  });
+}

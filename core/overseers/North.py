@@ -520,9 +520,10 @@ class North:
 
                     # resultant
 
-                    resultant_angle = math.atan2(leftright_movement, forwardback_movement)
+                    resultant_angle = math.atan2(-leftright_movement, forwardback_movement) * 180 / math.pi
                     resultant_speed = math.sqrt(leftright_movement ** 2 + forwardback_movement ** 2)
 
+                    print(f'res: angle {resultant_angle:.2f} speed {resultant_speed:.2f}')
 
                     # consider if it would cause us to drive into the ball
                     # the robot's radius is 88 mm; the ball's radius is 21 mm

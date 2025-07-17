@@ -1,0 +1,438 @@
+{
+  "themeSettings": {
+    "currentlySelected": "Lake",
+    "themes": [
+      {
+        "name": "Voyage",
+        "accent_color": "#ff8093",
+        "card_foreground_color": "#f4eeff",
+        "card_background_color": "#1a1826",
+        "border_color": "#b9bcda",
+        "background_type": "image",
+        "background_image_url": "backgrounds/m23bwh4n0x151.png",
+        "background_image_tint_color": "#000000",
+        "background_solid_color": "#13111a",
+        "background_glow_color": "#9d4edd",
+        "background_image": "none",
+        "card_blur": 50,
+        "card_opacity": 0.2
+      },
+      {
+        "name": "Grayscale",
+        "accent_color": "#6b6b6b",
+        "card_foreground_color": "#000000",
+        "card_background_color": "#8c8c8c",
+        "border_color": "#000000",
+        "card_opacity": 0.15,
+        "card_blur": 16,
+        "background_type": "solid",
+        "background_image_url": "backgrounds/cliff.png",
+        "background_image_tint_color": "#ffffff",
+        "background_solid_color": "#ffffff",
+        "background_glow_color": "#000000",
+        "background_image": "none"
+      },
+      {
+        "name": "Windows",
+        "accent_color": "#e5f3ff",
+        "card_foreground_color": "#ffffff",
+        "card_background_color": "#000000",
+        "border_color": "#62a6fe",
+        "card_opacity": 0.15,
+        "card_blur": 50,
+        "background_type": "image",
+        "background_image_url": "backgrounds/windows.png",
+        "background_image_tint_color": "#ffffff",
+        "background_solid_color": "#13111a",
+        "background_glow_color": "#9d4edd",
+        "background_image": "none"
+      },
+      {
+        "name": "Lake",
+        "accent_color": "#c2ceff",
+        "card_foreground_color": "#ffffff",
+        "card_background_color": "#1c1c1c",
+        "border_color": "#000000",
+        "card_opacity": 0.25,
+        "card_blur": 44,
+        "background_type": "image",
+        "background_image_url": "backgrounds/pic_rogue_3_10.real-esrgan(realesrgan-x4plus).png",
+        "background_image_tint_color": "#ffffff",
+        "background_solid_color": "#13111a",
+        "background_glow_color": "#9d4edd"
+      },
+      {
+        "name": "Clouds",
+        "accent_color": "#ffb3bf",
+        "card_foreground_color": "#f4eeff",
+        "card_background_color": "#ffffff",
+        "border_color": "#ffe5e5",
+        "card_opacity": 0.0001,
+        "card_blur": 50,
+        "background_type": "image",
+        "background_image_url": "backgrounds/xm9f45str5ya1_3.png",
+        "background_image_tint_color": "#000000",
+        "background_solid_color": "#13111a",
+        "background_glow_color": "#9d4edd",
+        "background_image": "none"
+      },
+      {
+        "name": "Ubuntu",
+        "accent_color": "#fb7185",
+        "card_foreground_color": "#fdf2f8",
+        "card_background_color": "#262626",
+        "border_color": "#a8a29e",
+        "background_type": "glow",
+        "background_image_url": "",
+        "background_image_tint_color": "#18181b",
+        "background_solid_color": "#18181b",
+        "background_glow_color": "#fb7185",
+        "background_image": "none",
+        "card_blur": 16
+      },
+      {
+        "name": "Invitation",
+        "accent_color": "#bfb0f2",
+        "card_foreground_color": "#f4eeff",
+        "card_background_color": "#1a1826",
+        "border_color": "#ccb8d9",
+        "card_opacity": 0.25,
+        "card_blur": 12,
+        "background_type": "image",
+        "background_image_url": "backgrounds/GCRVI-aaYAIAUkN.jpg",
+        "background_image_tint_color": "#000000",
+        "background_solid_color": "#13111a",
+        "background_glow_color": "#9d4edd"
+      },
+      {
+        "name": "Theme 8",
+        "accent_color": "#ffffff",
+        "card_foreground_color": "#ffffff",
+        "card_background_color": "#6b6b6b",
+        "border_color": "#ffffff",
+        "card_opacity": 0.2,
+        "card_blur": 50,
+        "background_type": "image",
+        "background_image_url": "backgrounds/z.png",
+        "background_image_tint_color": "#ffffff",
+        "background_solid_color": "#ffffff",
+        "background_glow_color": "#9d4edd",
+        "background_image": "none"
+      }
+    ]
+  },
+  "sshProfiles": {
+    "currentlySelected": "ni",
+    "profiles": [
+      {
+        "name": "ichi",
+        "hostname": "ichi.local",
+        "username": "ichi",
+        "identityFile": "identityfiles\\1738283148317-main",
+        "motors": {
+          "motor1": {
+            "type": "M3508",
+            "i2c": "35",
+            "angle": "45",
+            "pole": "1",
+            "amps": "10",
+            "calibration": "4841728,1245,1242"
+          },
+          "motor2": {
+            "type": "M3508",
+            "i2c": "36",
+            "angle": "135",
+            "pole": "1",
+            "amps": "10",
+            "calibration": "173516288,1250,1242"
+          },
+          "motor3": {
+            "type": "M3508",
+            "i2c": "37",
+            "angle": "-135",
+            "pole": "1",
+            "amps": "10",
+            "calibration": "59183360,1235,1242"
+          },
+          "motor4": {
+            "type": "M3508",
+            "i2c": "38",
+            "angle": "-45",
+            "pole": "1",
+            "amps": "10",
+            "calibration": "237928960,1239,1246"
+          },
+          "motorD": {
+            "type": "M2006",
+            "i2c": "26",
+            "angle": "0",
+            "pole": "-1",
+            "amps": "5.5",
+            "calibration": "1502516480,1247"
+          }
+        },
+        "camera": {
+          "centre": {
+            "x": "404",
+            "y": "228"
+          },
+          "forwardangle": "-269",
+          "mask": {
+            "inner": "23",
+            "outer": "170"
+          }
+        },
+        "capturezone": {
+          "x1": "572",
+          "y1": "311",
+          "x2": "572",
+          "y2": "180"
+        },
+        "robotlineboundary": "331"
+      },
+      {
+        "name": "ni",
+        "hostname": "ni.local",
+        "username": "ni",
+        "identityFile": "identityfiles\\1738283206290-main",
+        "motors": {
+          "motor1": {
+            "type": "M3508",
+            "i2c": "35",
+            "angle": "45",
+            "pole": "1",
+            "amps": "10",
+            "calibration": "86515968,1233,1229"
+          },
+          "motor2": {
+            "type": "M3508",
+            "i2c": "36",
+            "angle": "135",
+            "pole": "1",
+            "amps": "10",
+            "calibration": "69921792,1242,1250"
+          },
+          "motor3": {
+            "type": "M3508",
+            "i2c": "37",
+            "angle": "-135",
+            "pole": "1",
+            "amps": "10",
+            "calibration": "5775360,1245,1247"
+          },
+          "motor4": {
+            "type": "M3508",
+            "i2c": "38",
+            "angle": "-45",
+            "pole": "1",
+            "amps": "10",
+            "calibration": "17427968,1234,1236"
+          },
+          "motorD": {
+            "type": "M2006",
+            "i2c": "31",
+            "angle": "0",
+            "pole": "-1",
+            "amps": "4.5",
+            "calibration": "1402861312,1237"
+          }
+        },
+        "camera": {
+          "centre": {
+            "x": "348",
+            "y": "191"
+          },
+          "forwardangle": "90",
+          "mask": {
+            "inner": "25",
+            "outer": "167"
+          }
+        },
+        "capturezone": {
+          "x1": "545",
+          "y1": "200",
+          "x2": "545",
+          "y2": "300"
+        },
+        "robotlineboundary": "202"
+      }
+    ]
+  },
+  "visionProfiles": {
+    "currentlySelected": "hotelnight",
+    "profiles": [
+      {
+        "name": "main",
+        "ball": {
+          "min": {
+            "h": 0,
+            "s": 132,
+            "v": 61
+          },
+          "max": {
+            "h": 14,
+            "s": 255,
+            "v": 255
+          },
+          "mask_on": false
+        },
+        "yellowGoal": {
+          "min": {
+            "h": 13,
+            "s": 162,
+            "v": 65
+          },
+          "max": {
+            "h": 29,
+            "s": 255,
+            "v": 255
+          },
+          "mask_on": false
+        },
+        "blueGoal": {
+          "min": {
+            "h": 92,
+            "s": 123,
+            "v": 19
+          },
+          "max": {
+            "h": 105,
+            "s": 255,
+            "v": 255
+          },
+          "mask_on": false
+        },
+        "greenField": {
+          "min": {
+            "h": 42,
+            "s": 95,
+            "v": 49
+          },
+          "max": {
+            "h": 68,
+            "s": 255,
+            "v": 255
+          },
+          "mask_on": false
+        },
+        "camera": {
+          "saturation": 1,
+          "exposure": 5000
+        },
+        "saturation": 1,
+        "exposure": 17500,
+        "whiteLines": {
+          "min": {
+            "h": 0,
+            "s": 0,
+            "v": 215
+          },
+          "max": {
+            "h": 180,
+            "s": 40,
+            "v": 255
+          },
+          "mask_on": false
+        },
+        "silver": {
+          "min": {
+            "h": 0,
+            "s": 197,
+            "v": 30
+          },
+          "max": {
+            "h": 20,
+            "s": 255,
+            "v": 255
+          },
+          "mask_on": false
+        }
+      },
+      {
+        "name": "hotelnight",
+        "ball": {
+          "min": {
+            "h": 0,
+            "s": 125,
+            "v": 43
+          },
+          "max": {
+            "h": 14,
+            "s": 255,
+            "v": 255
+          },
+          "mask_on": false
+        },
+        "yellowGoal": {
+          "min": {
+            "h": 13,
+            "s": 162,
+            "v": 48
+          },
+          "max": {
+            "h": 29,
+            "s": 255,
+            "v": 255
+          },
+          "mask_on": true
+        },
+        "blueGoal": {
+          "min": {
+            "h": 92,
+            "s": 123,
+            "v": 19
+          },
+          "max": {
+            "h": 105,
+            "s": 255,
+            "v": 255
+          },
+          "mask_on": false
+        },
+        "greenField": {
+          "min": {
+            "h": 42,
+            "s": 95,
+            "v": 49
+          },
+          "max": {
+            "h": 68,
+            "s": 255,
+            "v": 255
+          },
+          "mask_on": false
+        },
+        "whiteLines": {
+          "min": {
+            "h": 0,
+            "s": 0,
+            "v": 215
+          },
+          "max": {
+            "h": 180,
+            "s": 40,
+            "v": 255
+          },
+          "mask_on": false
+        },
+        "silver": {
+          "min": {
+            "h": 0,
+            "s": 197,
+            "v": 30
+          },
+          "max": {
+            "h": 20,
+            "s": 255,
+            "v": 255
+          },
+          "mask_on": false
+        },
+        "camera": {
+          "saturation": 1,
+          "exposure": 15000
+        }
+      }
+    ]
+  }
+}

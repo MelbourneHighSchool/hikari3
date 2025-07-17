@@ -10,6 +10,8 @@ from subsystems.Drivetrain import Drivetrain
 from subsystems.ObjectDetection import ObjectDetection
 from subsystems.AppdataManager import AppdataManager
 from components.Kicker import Kicker
+from components.LineRing import LineRing
+from components.Comm import GPIOMonitor
 
 import os
 
@@ -84,17 +86,21 @@ def config_to_motor(motor_config):
     if motor_config['type'] == 'M3508':
         calibration = mc['calibration'].split(',')
 
+        print('--------------------------------')
+        print(mc)
+        print(calibration)
+
         m = Motor(
             i2c_address=int(mc['i2c']),
             wire=wire,
             angle_offset=int(mc['angle']),
-            sensor_direction=int(mc['pole']),
             current_limit_amps=float(mc['amps']),
             elec_angle_offset=int(calibration[0]),
+            sensor_direction=int(mc['pole']),
             enc1_offset=int(calibration[1]),
             enc2_offset=int(calibration[2])
         )
-
+        
         return m
     elif motor_config['type'] == 'M2006':
         #'motorD': {'type': 'M2006', 'i2c': '31', 'angle': '0', 'pole': '-1',
@@ -116,49 +122,6 @@ def config_to_motor(motor_config):
 
 # Initialize Motors
 try:
-    # motors = [
-    #     Motor(
-    #         i2c_address=27,
-    #         wire=wire,
-    #         angle_offset=50,  # front right motor
-    #         current_limit_amps=10,
-    #         elec_angle_offset=175907840,
-    #         sensor_direction=1,
-    #         enc1_offset=1252,
-    #         enc2_offset=1240
-    #     ),
-    #     Motor(
-    #         i2c_address=26,
-    #         wire=wire,
-    #         angle_offset=130,   # back right motor
-    #         current_limit_amps=10,
-    #         elec_angle_offset=238026496,
-    #         sensor_direction=1,
-    #         enc1_offset=1240,
-    #         enc2_offset=1240
-    #     ),
-    #     Motor(
-    #         i2c_address=28,
-    #         wire=wire,
-    #         angle_offset=-130,  # Back left motor
-    #         current_limit_amps=10,
-    #         elec_angle_offset=58651904,
-    #         sensor_direction=1,
-    #         enc1_offset=1245,
-    #         enc2_offset=1243
-    #     ),
-    #     Motor(
-    #         i2c_address=25,
-    #         wire=wire,
-    #         angle_offset=-50,    # Front left motor
-    #         current_limit_amps=10,
-    #         elec_angle_offset=5288448,
-    #         sensor_direction=1,
-    #         enc1_offset=1256,
-    #         enc2_offset=1244
-    #     )
-    # ]
-
     motors = [
         config_to_motor(robot_profile['motors']['motor1']),
         config_to_motor(robot_profile['motors']['motor2']),
@@ -190,7 +153,7 @@ except Exception as e:
 # Initialize Camera
 try:
     from components.Camera import Camera
-    camera = Camera(PORT=8000, resolution=(1000, 1000), frame_rate=30)
+    camera = Camera(PORT=8000, resolution=(640, 420), frame_rate=60)
     components["Camera"] = camera
     print("Successfully initialised camera")
 except Exception as e:
@@ -218,6 +181,21 @@ try:
 except Exception as e:
     print("Failed to initialise kicker:", e)
 
+# Initialize LineRing
+try:
+    line_ring = LineRing(threshold=0.4, angle_offset=30)
+    components["LineRing"] = line_ring
+    print("Successfully initialised line ring")
+except Exception as e:
+    print("Failed to initialise line ring:", e)
+
+# Initialize Communication Monitor
+try:
+    comm_monitor = GPIOMonitor(22, cooldown=0.1, pull_up=False)
+    components["Comm"] = comm_monitor
+    print("Successfully initialised communication monitor")
+except Exception as e:
+    print("Failed to initialise communication monitor:", e)
 
 
 print("Initialising subsystems...")

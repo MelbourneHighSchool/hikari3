@@ -30,7 +30,7 @@ class Direct:
         # Initialize PIDs
         self.compass_pid = PID(0.02, 0.0, 0.0, setpoint=0, output_limits=(-1.5, 1.5))
         self.target_goal_pid = PID(0.02, 0.0, 0.0, setpoint=0, output_limits=(-1.2, 1.2))
-        self.ball_pid = PID(0.015, 0.0, 0.0, setpoint=0, output_limits=(-2, 2))
+        self.ball_pid = PID(0.02, 0.0, 0.0, setpoint=0, output_limits=(-2, 2))
         self.preciser_ball_pid = PID(0.015, 0.0, 0.0, setpoint=0, output_limits=(-2.5, 2.5))
 
         # Add line touch handling variables
@@ -61,6 +61,9 @@ class Direct:
         Process each frame and turn the robot to face the ball if detected.
         When the ball is in front, drive towards it.
         """
+
+        primary_speed = 0.6
+
         try:
             # print('proc frame')
 
@@ -135,6 +138,35 @@ class Direct:
                 
                 # print("Yellow goal: angle", yellow_goal_angle, "distance", yellow_goal_distance_mm)
 
+                
+
+                original_yellow_goal_x, original_yellow_goal_y = object_detection.original_yellow_centre
+
+
+                original_yellow_goal_x -= self.center[0]
+                original_yellow_goal_y -= self.center[1]
+
+                print(f"normal ({yellow_goal_x},{yellow_goal_y})   original ({original_yellow_goal_x,original_yellow_goal_y})")
+
+                original_yellow_goal_angle = (math.atan2(original_yellow_goal_y, original_yellow_goal_x) * 180 / math.pi) + 90
+
+                # Normalize angle to -180 to 180 range
+                if original_yellow_goal_angle > 180:
+                    original_yellow_goal_angle -= 360
+                elif original_yellow_goal_angle < -180:
+                    original_yellow_goal_angle += 360
+
+                original_yellow_goal_angle = -original_yellow_goal_angle  # because mirror flips everything
+                original_yellow_goal_angle = original_yellow_goal_angle - float(self.camera_config['forwardangle'])
+                original_yellow_goal_angle = original_yellow_goal_angle + 180
+
+                # Normalize angle to -180 to 180 range
+                if original_yellow_goal_angle > 180:
+                    original_yellow_goal_angle -= 360
+                elif original_yellow_goal_angle < -180:
+                    original_yellow_goal_angle += 360
+
+
             if "blueGoal" in detected_objects and detected_objects["blueGoal"] is not None:
                 blue_goal_found = True
 
@@ -163,6 +195,30 @@ class Direct:
                 
                 # print("Blue goal: angle", blue_goal_angle, "distance", blue_goal_distance_mm)
 
+
+                original_blue_goal_y, original_blue_goal_x = object_detection.original_blue_centre
+
+
+                original_blue_goal_x -= self.center[0]
+                original_blue_goal_y -= self.center[1]
+
+                original_blue_goal_angle = (math.atan2(original_blue_goal_y, original_blue_goal_x) * 180 / math.pi) + 90
+
+                # Normalize angle to -180 to 180 range
+                if original_blue_goal_angle > 180:
+                    original_blue_goal_angle -= 360
+                elif original_blue_goal_angle < -180:
+                    original_blue_goal_angle += 360
+
+                original_blue_goal_angle = -original_blue_goal_angle  # because mirror flips everything
+                original_blue_goal_angle = original_blue_goal_angle - float(self.camera_config['forwardangle'])
+                original_blue_goal_angle = original_blue_goal_angle + 180
+
+                # Normalize angle to -180 to 180 range
+                if original_blue_goal_angle > 180:
+                    original_blue_goal_angle -= 360
+                elif original_blue_goal_angle < -180:
+                    original_blue_goal_angle += 360
 
             if yellow_goal_found and blue_goal_found:
                 # Calculate the angle and magnitude of the average vector between the two goals
@@ -254,7 +310,7 @@ class Direct:
                     
                     self.subsystems["Drivetrain"].quickdrive(direction, speed, 0)
 
-                    time.sleep(0.5)
+                    # time.sleep(0.5)
             
 
 
@@ -272,28 +328,37 @@ class Direct:
             if ball_captured:
                 print('ball captured')
 
-                set_dribbler_speed = 0.5
+                set_dribbler_speed = primary_speed
 
                 target_goal = detected_objects[self.targetGoal]
                 print(self.targetGoal, target_goal)
                 if target_goal is not None:
-                    # Get goal position relative to center
-                    x, y = target_goal
-                    x -= self.center[0]
-                    y -= self.center[1]
+                    # # Get goal position relative to center
+                    # x, y = target_goal
+                    # x -= self.center[0]
+                    # y -= self.center[1]
 
-                    # Calculate goal angle
-                    goal_angle = (math.atan2(y, x) * 180 / math.pi) + 90
+                    # # Calculate goal angle
+                    # goal_angle = (math.atan2(y, x) * 180 / math.pi) + 90
                     
-                    # Normalize angle to -180 to 180 range
-                    if goal_angle > 180:
-                        goal_angle -= 360
-                    elif goal_angle < -180:
-                        goal_angle += 360
+                    # # Normalize angle to -180 to 180 range
+                    # if goal_angle > 180:
+                    #     goal_angle -= 360
+                    # elif goal_angle < -180:
+                    #     goal_angle += 360
 
-                    goal_angle = -goal_angle  # because mirror flips everything
-                    goal_angle = goal_angle - float(self.camera_config['forwardangle'])
-                    goal_angle = goal_angle + 180
+                    # goal_angle = -goal_angle  # because mirror flips everything
+                    # goal_angle = goal_angle - float(self.camera_config['forwardangle'])
+                    # goal_angle = goal_angle + 180
+
+                    goal_angle = 0
+
+                    if "yellow" in self.targetGoal.lower():
+                        goal_angle = original_yellow_goal_angle
+                    elif "blue" in self.targetGoal.lower():
+                        goal_angle = original_blue_goal_angle
+
+
                     
                     # Normalize angle to -180 to 180 range
                     if goal_angle > 180:
@@ -309,7 +374,7 @@ class Direct:
 
 
                     # If goal is roughly in front of us (within 7 degrees), drive towards it
-                    if abs(angle_diff) < 7:
+                    if abs(angle_diff) < 10:
                         speed = 2.0  # Drive at speed 2
                         direction = goal_angle  # Drive in the direction of the goal
 
@@ -419,11 +484,12 @@ class Direct:
 
                 # If ball is roughly in front of us (within 30 degrees), drive towards it
                 if abs(angle_diff) < 10:
-                    speed = 2.0 if ball_special_found else 3.0  # Drive at speed 2
+                    speed = 2.0 if ball_special_found else 4.5  # Drive at speed 2
                     direction = ball_angle  # Drive in the direction of the ball
                     set_dribbler_speed = 0.5
                     
                     # Slow down when close to ball
+
                 else:
                     # speed = 0  # Just rotate to face the ball
                     # direction = 0
@@ -436,15 +502,18 @@ class Direct:
                     if abs(ball_angle) > 25:
                         speed = 0
 
-                        # rotation *= 2
+                        rotation *= 1.5
 
                 
                 if ball_distance_mm < 400:
+                    speed = 2
+
+                if ball_distance_mm < 350:
                     speed = 1.5
                     
 
                 if ball_special_found:
-                    set_dribbler_speed = 0.5
+                    set_dribbler_speed = primary_speed
 
 
                 # Drive with rotation and optional forward movement
