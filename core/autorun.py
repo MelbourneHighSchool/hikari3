@@ -97,6 +97,7 @@ def comm_start_robot():
     global status, note
     try:
         print("Communication module: Starting robot")
+        #components["Compass"].zero()
         status = "RUNNING"
         note = "Comm: Started"
         if "Drivetrain" in subsystems:

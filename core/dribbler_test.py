@@ -1,6 +1,7 @@
 
 import sys
 import time
+import atexit
 from components.Wire import wire
 from components.Motor import Motor
 from components.M2006 import M2006
@@ -16,3 +17,10 @@ motor = M2006(
 )
 
 motor.set_speed_rps(float(sys.argv[1]))
+
+def on_exit():
+    # --- BEGIN USER EXIT LOGIC ---
+    print("Exiting! Place your cleanup logic here.")
+    # --- END USER EXIT LOGIC ---
+
+atexit.register(on_exit)

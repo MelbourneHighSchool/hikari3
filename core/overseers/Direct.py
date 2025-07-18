@@ -5,6 +5,7 @@
 #   - subsystem: Drivetrain
 
 import asyncio
+import threading
 import numpy as np
 import math
 import time
@@ -24,12 +25,15 @@ class Direct:
         self.components = components
         self.subsystems = subsystems
 
+
+        self.undoingline = False
+
         if "Compass" in self.components:
             self.components["Compass"].zero()
  
         # Initialize PIDs
         self.compass_pid = PID(0.02, 0.0, 0.0, setpoint=0, output_limits=(-1.5, 1.5))
-        self.target_goal_pid = PID(0.02, 0.0, 0.0, setpoint=0, output_limits=(-1.2, 1.2))
+        self.target_goal_pid = PID(0.012, 0.0, 0.0, setpoint=0, output_limits=(-1.2, 1.2))
         self.ball_pid = PID(0.02, 0.0, 0.0, setpoint=0, output_limits=(-2, 2))
         self.preciser_ball_pid = PID(0.015, 0.0, 0.0, setpoint=0, output_limits=(-2.5, 2.5))
 
@@ -62,9 +66,14 @@ class Direct:
         When the ball is in front, drive towards it.
         """
 
-        primary_speed = 0.6
+        primary_speed = 1.4
 
         try:
+            # print(self.undoingline)
+
+            if self.undoingline == True:
+                return
+
             # print('proc frame')
 
             # Get compass heading
@@ -146,7 +155,7 @@ class Direct:
                 original_yellow_goal_x -= self.center[0]
                 original_yellow_goal_y -= self.center[1]
 
-                print(f"normal ({yellow_goal_x},{yellow_goal_y})   original ({original_yellow_goal_x,original_yellow_goal_y})")
+                # print(f"normal ({yellow_goal_x},{yellow_goal_y})   original ({original_yellow_goal_x,original_yellow_goal_y})")
 
                 original_yellow_goal_angle = (math.atan2(original_yellow_goal_y, original_yellow_goal_x) * 180 / math.pi) + 90
 
@@ -196,7 +205,7 @@ class Direct:
                 # print("Blue goal: angle", blue_goal_angle, "distance", blue_goal_distance_mm)
 
 
-                original_blue_goal_y, original_blue_goal_x = object_detection.original_blue_centre
+                original_blue_goal_x, original_blue_goal_y = object_detection.original_blue_centre
 
 
                 original_blue_goal_x -= self.center[0]
@@ -293,7 +302,6 @@ class Direct:
             # Get compass heading
             compass_angle = self.components["Compass"].get_signed_heading()
 
-
             
             # Check for line detection
             if "LineRing" in self.components:
@@ -304,13 +312,31 @@ class Direct:
                     reverse_direction = (line_angle + 180) % 360
                     # print(f"Line detected at {line_angle:.2f}°, driving reverse at {reverse_direction:.2f}°")
 
+
+
                     direction = reverse_direction
+
+                    if yellow_goal_found and blue_goal_found:
+                        direction = avg_angle
+
+                    else:
+                        direction = 180
+
                     speed = 1.0
 
                     
                     self.subsystems["Drivetrain"].quickdrive(direction, speed, 0)
 
-                    # time.sleep(0.5)
+                    self.undoingline = True
+                    print("REVERSING in direction", direction)
+
+            
+                    def clear_undoing_line():
+                        self.undoingline = False
+                        print("STOP")
+                    threading.Timer(0.6, clear_undoing_line).start()
+
+                    return
             
 
 
@@ -379,7 +405,8 @@ class Direct:
                         direction = goal_angle  # Drive in the direction of the goal
 
                     else:
-                        speed = 0  # Just rotate to face the goal
+                        # speed = 0  # Just rotate to face the goal
+                        speed = 1.0  # Drive at speed 1 (TEST)
                         direction = 0
 
                     if abs(angle_diff) < 4:
@@ -409,6 +436,7 @@ class Direct:
             
             # Update last known ball position if we see the ball
             if ball_detected:
+            # if False:
                 self.last_ball_position = detected_objects["ball"]
                 self.last_ball_time = current_time
                 ball_position = detected_objects["ball"]
@@ -423,6 +451,8 @@ class Direct:
 
             # Process ball position
             if ball_position is not None or special_processing == True:
+                print('BALL DETECT')
+            # if False:
                 ball_angle = 0
                 
                 if special_processing == False:
@@ -483,10 +513,10 @@ class Direct:
                 rotation = -self.ball_pid(angle_diff)
 
                 # If ball is roughly in front of us (within 30 degrees), drive towards it
-                if abs(angle_diff) < 10:
+                if abs(angle_diff) < 14:
                     speed = 2.0 if ball_special_found else 4.5  # Drive at speed 2
                     direction = ball_angle  # Drive in the direction of the ball
-                    set_dribbler_speed = 0.5
+                    set_dribbler_speed = primary_speed
                     
                     # Slow down when close to ball
 
@@ -521,13 +551,70 @@ class Direct:
                 self.components["Dribbler"].set_speed(set_dribbler_speed)
 
             else:
+                print("HELLO")
                 # drive towards centre
 
-                if yellow_goal_found and blue_goal_found:
-                    self.subsystems["Drivetrain"].quickdrive(avg_angle, 1.0, 0)
+                own_goal_angle = None
+                own_goal_distance = None
 
-                elif yellow_goal_found:
-                    self.subsystems["Drivetrain"].quickdrive(yellow_goal_angle, 1.0, 0)
+                if "yellow" in self.ownGoal.lower():
+                    own_goal_angle = yellow_goal_angle
+                    own_goal_distance = yellow_goal_distance_mm
+                elif "blue" in self.ownGoal.lower():
+                    own_goal_angle = blue_goal_angle
+                    own_goal_distance = blue_goal_distance_mm
+
+
+
+                if own_goal_angle != None:
+                    # self.subsystems["Drivetrain"].quickdrive(own_goal_angle, 4.0, 0)
+                    heading = compass_angle
+                    own_goal_angle += heading
+
+                    own_goal_horizontal_component = -own_goal_distance * math.sin(math.radians(own_goal_angle))
+                    own_goal_vertical_component = own_goal_distance * math.cos(math.radians(own_goal_angle))
+
+
+                    # print(f'own goal angle: {own_goal_angle}, distance: {own_goal_distance}')
+                    print(f'horiz: {own_goal_horizontal_component}, vert: {own_goal_vertical_component}')
+
+                    to_end_horizontal = 250
+                    to_end_vertical = -120
+
+                    if own_goal_horizontal_component < 0:
+                        print("LEFT")
+                        to_end_horizontal *= -1
+                    else:
+                        print("RIGHT")
+
+                    offset_horizontal = to_end_horizontal - own_goal_horizontal_component
+                    offset_vertical = own_goal_vertical_component - to_end_vertical
+
+                    # print(f'offset: {offset_horizontal}, {offset_vertical}')
+
+                    angle_to_offset = math.atan2(offset_horizontal, offset_vertical) * 180 / math.pi
+                    distance_to_offset = math.sqrt(offset_horizontal ** 2 + offset_vertical ** 2)
+
+                    # print(f'angle to offset: {angle_to_offset}')
+
+                    gotherespeed = 5.5
+                    if distance_to_offset < 200:
+                        gotherespeed = 2
+
+                    self.subsystems["Drivetrain"].quickdrive(angle_to_offset - heading, gotherespeed, 0)
+
+
+                # else:
+                #     print('no goal')
+                #     pass
+                    # 
+
+
+                # if yellow_goal_found and blue_goal_found:
+                #     self.subsystems["Drivetrain"].quickdrive(avg_angle, 1.0, 0)
+
+                # elif yellow_goal_found:
+                #     self.subsystems["Drivetrain"].quickdrive(yellow_goal_angle, 1.0, 0)
 
                 else:
                     self.subsystems["Drivetrain"].quickdrive(180, 1.0, 0)
